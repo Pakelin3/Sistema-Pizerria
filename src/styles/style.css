@@ -1,0 +1,13 @@
+.nav_buttons:hover{
+    background-color: #31373d;
+}
+
+.side_icon{
+    fill: white;
+    margin: 0 auto 5px;
+} .side_iconH{fill: white;}
+
+.table{
+    height: 800px;
+    width: 100%;
+}
