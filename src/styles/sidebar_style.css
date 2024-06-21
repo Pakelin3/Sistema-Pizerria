@@ -1,0 +1,28 @@
+.button_h:hover {
+  background-color: #404850;
+}
+.button_h:active {
+  background-color: #30373d;
+}
+
+.side_icon {
+  fill: white;
+  margin: 0 auto 5px;
+}
+
+.side_iconH {
+  fill: white;
+}
+
+.table {
+  height: 800px;
+  width: 100%;
+}
+
+.vertical-line {
+  border-left: 1px solid;
+  color: inherit;
+  height: auto;
+  opacity: 0.25;
+  margin-right: 1rem;
+}

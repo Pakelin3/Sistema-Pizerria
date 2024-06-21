@@ -1,3 +1,8 @@
-new DataTable('#example', {
-    ajax: '../utils/arrays.txt'
+$(document).ready(function () {
+    $.getJSON('../utils/spanish.txt', function (language) {
+        $('#example').DataTable({
+            ajax: '../utils/arrays.txt',
+            language: language
+        });
+    });
 });
