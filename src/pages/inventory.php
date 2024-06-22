@@ -13,18 +13,20 @@
 
 <body>
 
-    <header class="d-flex py-3 text-bg-dark fixed-top min-vw-100" style="height: 80px; margin-left: 150px;">
-        <div class="vertical-line"></div>
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">Añadir
+    <div class="d-flex min-vw-100 border-bottom shadow" style=" margin-left: 150px; height:175px;">
+        <!-- <div class="vertical-line"></div> -->
+    </div>
+
+    <div class="d-flex min-vw-100 justify-content-end px-5 my-4" style="padding-left: 198px !important;">
+        <button type=" button" class="btn btn-primary" style="width:175px; height:48px;" data-bs-toggle="modal" data-bs-target="#exampleModal">+ Añadir
             mercancia</button>
-    </header>
+    </div>
 
     <!-- sidebar -->
     <?php include '../components/sidebar.php'; ?>
 
     <!-- Modal -->
-    <div class="modal fade modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -33,34 +35,82 @@
                 </div>
                 <div class="modal-body">
 
-                    <form action="">
-
+                    <form id="productForm">
                         <div class="input-group mb-3">
-                            <span class="input-group-text">$</span>
-                            <input type="text" class="form-control"
-                                aria-label="Cantidad en dolares (con punto y 2 decimales)">
+                            <span class="input-group-text" id="basic-addon1">Nombre de la mercancía</span>
+                            <input type="text" name="nombre_mercancia" class="form-control" placeholder="Escriba aquí el nombre" id="Product_name" aria-label="Product_name" aria-describedby="Nombre de la mercancía" required>
                         </div>
 
-                    </form>
+                        <div class="input-group mb-3">
+                            <label class="input-group-text" for="inputGroupSelect02">Seleccione tipo de
+                                mercancía</label>
+                            <select class="form-select" id="inputGroupSelect02" name="tipo_mercancia" required>
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option value="1">Ingrediente</option>
+                                <option value="2">Consumible</option>
+                            </select>
+                        </div>
 
+                        <div class="input-group mb-3" id="Q_G">
+                            <span class="input-group-text">Cantidad en gramos</span>
+                            <input type="number" id="quantity_grams" name="cantidad_gramos" class="form-control" placeholder="" aria-label="Cantidad en gramos">
+                        </div>
+
+                        <div class="input-group mb-3" id="Q">
+                            <span class="input-group-text">Cantidad</span>
+                            <input type="number" id="quantity" name="cantidad" class="form-control" placeholder="" aria-label="Cantidad">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar
+                                operación</button>
+                            <button type="button" onclick="submitProductForm();" id="guardarMercanciaBtn" class="btn btn-primary">Guardar mercancía</button>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+                </form>
+
+                <div id="responseMessage" class="mt-3"></div>
             </div>
+
+            <script>
+                function submitProductForm() {
+                    $('#guardarMercanciaBtn').prop('disabled', true);
+
+                    var formData = $('#productForm').serialize();
+
+                    $.ajax({
+                        url: '../database/database_conection/save_product.php',
+                        type: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            $('#guardarMercanciaBtn').prop('disabled', false);
+                            $('#responseMessage').html('<div class="alert alert-success">' +
+                                response +
+                                '</div>');
+                            setTimeout(function() {
+                                $('#productForm')[0].reset();
+                            }, 2000);
+                            setTimeout(function() {
+                                $('#responseMessage').html('<div class="alert alert-success">' + '' +
+                                    '</div>');
+                            }, 8000);
+                        },
+                        error: function(xhr, status, error) {
+                            $('#guardarMercanciaBtn').prop('disabled', false);
+                            $('#responseMessage').html('<div class="alert alert-danger">Error: ' + xhr
+                                .responseText + '</div>');
+                        }
+                    });
+                }
+            </script>
+
         </div>
+    </div>
     </div>
 
 
-    <section id="inventory_menu">
-        <div>
-        </div>
-    </section>
-
-
     <!-- Cuerpo de la pagina -->
-    <div class="d-column align-items-start justify-content-center" style="padding-left:150px; margin-top:80px;">
+    <div class="d-column align-items-start justify-content-center" style="padding-left:150px;">
         <!-- Tabla de datos -->
         <div class="container">
             <div class="table-responsive">
@@ -88,14 +138,6 @@
                 </table>
             </div>
         </div>
-
-
-        <h1 class="roboto-thin">This is Roboto Thin</h1>
-        <p class="roboto-light">This is Roboto Light</p>
-        <p class="roboto-regular">This is Roboto Regular</p>
-        <p class="roboto-medium">This is Roboto Medium</p>
-        <p class="roboto-bold">This is Roboto Bold</p>
-        <p class="roboto-black">This is Roboto Black</p>
     </div>
 
 
@@ -105,6 +147,8 @@
     <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
     <script src="../scripts/datatables.min.js"></script>
     <script src="../scripts/table.js"></script>
+    <script src="../scripts/modals_funtion.js"></script>
+    <!-- <script src="../scripts/ajax.js"></script> -->
 </body>
 
 </html>
