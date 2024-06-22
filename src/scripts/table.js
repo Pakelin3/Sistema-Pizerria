@@ -1,10 +1,18 @@
 $(document).ready(function () {
     $.getJSON('../utils/spanish.txt', function (language) {
         $('#example').DataTable({
-            ajax: '../utils/arrays.txt',
-            language: language
+            language: language,
+            "ajax": "../database/database_conection/get_product.php",
+            "columns": [{
+                "data": "Nombre"
+            },
+            {
+                "data": "Cantidad"
+            },
+            {
+                "data": "Precio"
+            }
+            ]
         });
     });
 });
-
-//hola moises m palabra

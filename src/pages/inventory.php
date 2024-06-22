@@ -70,7 +70,17 @@
                         </div>
 
                         <div class="input-group mb-3" id="Q_G">
-                            <span class="input-group-text">Cantidad en gramos</span>
+                            <span class="input-group-text" id="cantidadSpan">Cantidad en</span>
+                            <button type="button"
+                                class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="updateCantidad('Gramos')">Gramos</a></li>
+                                <li><a class="dropdown-item" href="#"
+                                        onclick="updateCantidad('Kilogramos')">Kilogramos</a></li>
+                            </ul>
                             <input type="number" id="quantity_grams" name="cantidad_gramos" class="form-control"
                                 placeholder="" aria-label="Cantidad en gramos">
                         </div>
@@ -80,25 +90,64 @@
                             <input type="number" id="quantity" name="cantidad" class="form-control" placeholder=""
                                 aria-label="Cantidad">
                         </div>
-
-                        <div class="input-group d-flex justify-content-center mb-3">
-                            <div id="responseMessage"></div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar
-                                operación</button>
-                            <button type="button" onclick="submitProductForm();" id="guardarMercanciaBtn"
-                                class="btn btn-primary">Guardar mercancía</button>
+                        <div class="input-group mb-3" id="P">
+                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">0.00</span>
+                            <input type="text" class="form-control" name="precio" id="price"
+                                aria-label="Precio en dolares (con puntos y dos decimales)">
                         </div>
                     </form>
+                    <div id="responseMessage"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar
+                        operación</button>
+                    <button type="button" onclick="submitProductForm();" id="guardarMercanciaBtn"
+                        class="btn btn-primary">Guardar mercancía</button>
                 </div>
             </div>
         </div>
     </div>
 
+
     <script>
+    function cargarDatosTabla() {
+        $('#example').DataTable().ajax.reload();
+    }
+
     function submitProductForm() {
+        // Validación | campos vacios
+        var inputs = $('#productForm input:visible');
+        var isValid = true;
+        inputs.each(function() {
+            if ($(this).val().trim() === '') {
+                isValid = false;
+                return false;
+            }
+        });
+        if (!isValid) {
+            $('#responseMessage').html('<div class="alert alert-danger">Todos los campos son obligatorios</div>');
+            return;
+        }
+
+        // Validacion | numeros positivos 
+        var cantidad = $('#quantity').val();
+        var cantidadGramos = $('#quantity_grams').val();
+        if (cantidad < 0 || cantidadGramos < 0) {
+            $('#responseMessage').html('<div class="alert alert-danger">La cantidad debe ser un número positivo</div>');
+            return;
+        }
+
+        // Validacion | formato de precio (ajuro se necesita 2 decimales)
+        var precio = $('#price').val();
+        if (!/^\d+(\.\d{1,2})?$/.test(precio)) {
+            $('#responseMessage').html(
+                '<div class="alert alert-danger">El precio debe tener el formato correcto (por ejemplo, 0.00)</div>'
+            );
+            return;
+        }
+
+
         var formData = $('#productForm').serialize();
 
         $.ajax({
@@ -116,6 +165,7 @@
                     '</div>');
                 setTimeout(function() {
                     $('#productForm')[0].reset();
+                    cargarDatosTabla();
                 }, 3500);
                 setTimeout(function() {
                     $('#guardarMercanciaBtn').prop('disabled', false);
@@ -139,38 +189,30 @@
         <div class="container rounded-2 border py-2" style="background-color: white;">
             <div class="table-responsive">
                 <table id="example" class="display" style="width:100%">
-                    <thead class=" border-bottom">
+                    <thead class="border-bottom">
                         <tr>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Extn.</th>
-                            <th>Start date</th>
-                            <th>Salary</th>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
                         </tr>
                     </thead>
-                    <tfoot class=" border-top">
+                    <tfoot class="border-top">
                         <tr>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Extn.</th>
-                            <th>Start date</th>
-                            <th>Salary</th>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
-    </div>
 
 
-    <script src="../scripts/jquery.js"></script>
-    <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
-    <script src="../scripts/datatables.min.js"></script>
-    <script src="../scripts/table.js"></script>
-    <script src="../scripts/modals_funtion.js"></script>
-    <!-- <script src="../scripts/ajax.js"></script> -->
+        <script src="../scripts/jquery.js"></script>
+        <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
+        <script src="../scripts/datatables.min.js"></script>
+        <script src="../scripts/table.js"></script>
+        <script src="../scripts/modals_funtion.js"></script>
 </body>
 
 </html>

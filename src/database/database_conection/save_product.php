@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tipo_mercancia = $_POST['tipo_mercancia'];
     $cantidad_gramos = isset($_POST['cantidad_gramos']) ? $_POST['cantidad_gramos'] : 0;
     $cantidad = isset($_POST['cantidad']) ? $_POST['cantidad'] : 0;
+    $precio = isset($_POST['precio']) ? $_POST['precio'] : 0;
 
     if ($tipo_mercancia == 1) {
         $sql_ingredientes = "INSERT INTO Ingredientes (Nombre_Ingrediente, Cantidad_Inventario) VALUES (?, ?)";
@@ -26,9 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->execute()) {
             $last_id = $stmt->insert_id;
             if ($tipo_mercancia == 2) {
-                $sql_inventario = "INSERT INTO Inventario (ID_Producto, Cantidad) VALUES (?, ?)";
+                $sql_inventario = "INSERT INTO Inventario (ID_Producto, Cantidad, Precio) VALUES (?, ?, ?)";
                 $stmt_inventario = $conn->prepare($sql_inventario);
-                $stmt_inventario->bind_param("ii", $last_id, $cantidad);
+                $stmt_inventario->bind_param("iid", $last_id, $cantidad, $precio);
                 $stmt_inventario->execute();
                 echo "Se han añadido " . $cantidad . " " . $nombre_mercancia . " al inventario.";
             }
@@ -41,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     http_response_code(405);
     echo "Método no permitido";
 }
+
 if (isset($conn)) {
     $conn->close();
 }
