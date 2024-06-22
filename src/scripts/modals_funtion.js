@@ -8,11 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
     selectElement.addEventListener('change', function () {
         const selectedValue = this.value;
 
-        // Hide both divs initially
         quantityGramsDiv.style.display = 'none';
         quantityDiv.style.display = 'none';
 
-        // Show the appropriate div based on the selected value
         if (selectedValue === '1') {
             quantityGramsDiv.style.display = 'flex';
         } else if (selectedValue === '2') {

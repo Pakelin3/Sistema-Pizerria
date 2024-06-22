@@ -19,10 +19,7 @@
   width: 100%;
 }
 
-.vertical-line {
-  border-left: 1px solid;
-  color: inherit;
-  height: auto;
-  opacity: 0.25;
+.solid-border {
+  border: 1px solid;
   margin-right: 1rem;
 }
