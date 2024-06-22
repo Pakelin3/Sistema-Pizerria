@@ -18,8 +18,7 @@
     </div>
 
     <div class="d-flex min-vw-100 justify-content-end px-5 my-4" style="padding-left: 198px !important;">
-        <button type=" button" class="btn btn-primary" style="width:175px; height:48px;" data-bs-toggle="modal"
-            data-bs-target="#exampleModal">+ Añadir
+        <button type=" button" class="btn btn-primary" style="width:175px; height:48px;" data-bs-toggle="modal" data-bs-target="#exampleModal">+ Añadir
             mercancía</button>
     </div>
 
@@ -27,8 +26,7 @@
     <?php include '../components/sidebar.php'; ?>
 
     <!-- Modal -->
-    <div class="modal fade modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -39,9 +37,7 @@
                     <form id="productForm">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">Nombre de la mercancía</span>
-                            <input type="text" name="nombre_mercancia" class="form-control"
-                                placeholder="Escriba aquí el nombre" id="Product_name" aria-label="Product_name"
-                                aria-describedby="Nombre de la mercancía" required>
+                            <input type="text" name="nombre_mercancia" class="form-control" placeholder="Escriba aquí el nombre" id="Product_name" aria-label="Product_name" aria-describedby="Nombre de la mercancía" required>
                         </div>
 
                         <div class="input-group mb-3">
@@ -56,14 +52,12 @@
 
                         <div class="input-group mb-3" id="Q_G">
                             <span class="input-group-text">Cantidad en gramos</span>
-                            <input type="number" id="quantity_grams" name="cantidad_gramos" class="form-control"
-                                placeholder="" aria-label="Cantidad en gramos">
+                            <input type="number" id="quantity_grams" name="cantidad_gramos" class="form-control" placeholder="" aria-label="Cantidad en gramos">
                         </div>
 
                         <div class="input-group mb-3" id="Q">
                             <span class="input-group-text">Cantidad</span>
-                            <input type="number" id="quantity" name="cantidad" class="form-control" placeholder=""
-                                aria-label="Cantidad">
+                            <input type="number" id="quantity" name="cantidad" class="form-control" placeholder="" aria-label="Cantidad">
                         </div>
 
                         <div class="input-group d-flex justify-content-center mb-3">
@@ -73,8 +67,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar
                                 operación</button>
-                            <button type="button" onclick="submitProductForm();" id="guardarMercanciaBtn"
-                                class="btn btn-primary">Guardar mercancía</button>
+                            <button type="button" onclick="submitProductForm();" id="guardarMercanciaBtn" class="btn btn-primary">Guardar mercancía</button>
                         </div>
                     </form>
                 </div>
@@ -83,40 +76,37 @@
     </div>
 
     <script>
-    function submitProductForm() {
-        $('#guardarMercanciaBtn').prop('disabled', true);
+        function submitProductForm() {
+            $('#guardarMercanciaBtn').prop('disabled', true);
 
-        var formData = $('#productForm').serialize();
+            var formData = $('#productForm').serialize();
 
-        $.ajax({
-            url: '../database/database_conection/save_product.php',
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                $('#guardarMercanciaBtn').prop('disabled', false);
-                $('#responseMessage').html(
-                    '<div class="alert alert-success">' +
-                    response +
-                    '</div>');
-                setTimeout(function() {
-                    $('#productForm')[0].reset();
-                }, 3500);
-                setTimeout(function() {
-                    $('#responseMessage').html('<div class="alert d-none">' + '' +
+            $.ajax({
+                url: '../database/database_conection/save_product.php',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#guardarMercanciaBtn').prop('disabled', false);
+                    $('#responseMessage').html(
+                        '<div class="alert alert-success">' +
+                        response +
                         '</div>');
-                }, 6000);
-            },
-            error: function(xhr, status, error) {
-                $('#guardarMercanciaBtn').prop('disabled', false);
-                $('#responseMessage').html('<div class="alert alert-danger">Error: ' + xhr
-                    .responseText + '</div>');
-            }
-        });
-    }
+                    setTimeout(function() {
+                        $('#productForm')[0].reset();
+                    }, 3500);
+                    setTimeout(function() {
+                        $('#responseMessage').html('<div class="alert d-none">' + '' +
+                            '</div>');
+                    }, 6000);
+                },
+                error: function(xhr, status, error) {
+                    $('#guardarMercanciaBtn').prop('disabled', false);
+                    $('#responseMessage').html('<div class="alert alert-danger">Error: ' + xhr
+                        .responseText + '</div>');
+                }
+            });
+        }
     </script>
-    </div>
-    </div>
-    </div>
 
 
     <!-- Cuerpo de la pagina -->
