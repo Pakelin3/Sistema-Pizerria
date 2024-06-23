@@ -22,27 +22,37 @@
         <div class="d-flex align-items-end px-0 border-top border-2 mt-5 ">
             <div class="d-flex align-items-center justify-content-start pt-3 mx-5">
                 <a class="link-secondary link-opacity-75 link-offset-2 link-underline link-underline-opacity-10"
-                    href="./index.php">Inicio </a>
-                <div class="mx-2">/</div>
+                    href="./index.php">Inicio</a>
+                <div class="mx-2 opacity-75">/</div>
                 <a class="link-secondary link-offset-2 link-underline link-underline-opacity-10"
-                    href="./inventory.php ">
-                    Inventario</a>
+                    href="./inventory.php ">Inventario</a>
             </div>
         </div>
     </div>
 
-    <div class="d-flex min-vw-100 justify-content-between px-5 my-4" style="padding-left: 198px !important;">
-        <h1 class=" fw-semibold">Gestión de inventario</h1>
-        <button type=" button" class="btn btn-primary" style="width:175px; height:48px;" data-bs-toggle="modal"
-            data-bs-target="#exampleModal">+ Añadir
-            mercancía</button>
+    <div class="d-flex min-vw-100 justify-content-between px-5 my-4"
+        style="padding-left: 198px !important; height:48px;">
+        <h1 class=" fw-semibold m-0">Gestión de inventario</h1>
+        <div class="d-flex align-items-center justify-content-end w-75">
+            <div class="input-group w-25">
+                <button id="filterButton" class="btn btn-outline-secondary" type="button">Filtrar</button>
+                <select class="form-select" id="inputGroupSelect03" aria-label="filtrar por">
+                    <option disabled selected>Por...</option>
+                    <option value="1">Ingredientes</option>
+                    <option value="2">Consumibles</option>
+                </select>
+            </div>
+            <button type=" button" class="btn btn-primary" style="width:175px; height:48px; margin-left:25px;"
+                data-bs-toggle="modal" data-bs-target="#añadir_inventario">+ Añadir
+                mercancía</button>
+        </div>
     </div>
 
     <!-- sidebar -->
     <?php include '../components/sidebar.php'; ?>
 
-    <!-- Modal -->
-    <div class="modal fade modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    <!-- Modal añadir -->
+    <div class="modal fade modal-lg" id="añadir_inventario" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -100,7 +110,8 @@
                     <div id="responseMessage"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        onclick="limpiarFormulario()">Cerrar
                         operación</button>
                     <button type="button" onclick="submitProductForm();" id="guardarMercanciaBtn"
                         class="btn btn-primary">Guardar mercancía</button>
@@ -112,11 +123,11 @@
 
     <script>
     function cargarDatosTabla() {
-        $('#example').DataTable().ajax.reload();
+        $('#inventory').DataTable().ajax.reload();
     }
 
     function submitProductForm() {
-        // Validación | campos vacios
+        // Validacion | campos vacios
         var inputs = $('#productForm input:visible');
         var isValid = true;
         inputs.each(function() {
@@ -139,14 +150,16 @@
         }
 
         // Validacion | formato de precio (ajuro se necesita 2 decimales)
-        var precio = $('#price').val();
-        if (!/^\d+(\.\d{1,2})?$/.test(precio)) {
-            $('#responseMessage').html(
-                '<div class="alert alert-danger">El precio debe tener el formato correcto (por ejemplo, 0.00)</div>'
-            );
-            return;
+        var tipoMercancia = $('#inputGroupSelect02').val();
+        if (tipoMercancia === "2") {
+            var precio = $('#price').val();
+            if (!/^\d+(\.\d{1,2})?$/.test(precio)) {
+                $('#responseMessage').html(
+                    '<div class="alert alert-danger">El precio debe tener el formato correcto (por ejemplo, 0.00)</div>'
+                );
+                return;
+            }
         }
-
 
         var formData = $('#productForm').serialize();
 
@@ -158,25 +171,22 @@
                 $('#guardarMercanciaBtn').prop('disabled', true);
             },
             success: function(response) {
-                $('#guardarMercanciaBtn').prop('disabled', false);
-                $('#responseMessage').html(
-                    '<div class="alert alert-success">' +
-                    response +
-                    '</div>');
+                $('#responseMessage').html('<div class="alert alert-success">' + response + '</div>');
                 setTimeout(function() {
                     $('#productForm')[0].reset();
                     cargarDatosTabla();
+                    $('#guardarMercanciaBtn').prop('disabled',
+                        false);
                 }, 3500);
                 setTimeout(function() {
-                    $('#guardarMercanciaBtn').prop('disabled', false);
                     $('#responseMessage').html('<div class="alert d-none">' + '' +
                         '</div>');
                 }, 6000);
             },
             error: function(xhr, status, error) {
+                $('#responseMessage').html('<div class="alert alert-danger">Error: ' + xhr.responseText +
+                    '</div>');
                 $('#guardarMercanciaBtn').prop('disabled', false);
-                $('#responseMessage').html('<div class="alert alert-danger">Error: ' + xhr
-                    .responseText + '</div>');
             }
         });
     }
@@ -187,17 +197,35 @@
     <div class="d-column align-items-start justify-content-center" style="padding-left:150px;">
         <!-- Tabla de datos -->
         <div class="container rounded-2 border py-2" style="background-color: white;">
-            <div class="table-responsive">
-                <table id="example" class="display" style="width:100%">
+            <!-- Tabla de datos para ingredientes -->
+            <div id="ingredientesTable" class="table-responsive">
+                <table id="ingredientes" class="display" style="width:100%">
                     <thead class="border-bottom">
-                        <tr>
+                        <tr id="ingredientesHeaders">
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tfoot class="border-top">
+                        <tr id="ingredientesFooters">
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- Tabla de datos para productos -->
+            <div id="productosTable" class="table-responsive" style="display: none;">
+                <table id="productos" class="display" style="width:100%">
+                    <thead class="border-bottom">
+                        <tr id="productosHeaders">
                             <th>Nombre</th>
                             <th>Cantidad</th>
                             <th>Precio</th>
                         </tr>
                     </thead>
                     <tfoot class="border-top">
-                        <tr>
+                        <tr id="productosFooters">
                             <th>Nombre</th>
                             <th>Cantidad</th>
                             <th>Precio</th>
@@ -206,13 +234,14 @@
                 </table>
             </div>
         </div>
+    </div>
 
 
-        <script src="../scripts/jquery.js"></script>
-        <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
-        <script src="../scripts/datatables.min.js"></script>
-        <script src="../scripts/table.js"></script>
-        <script src="../scripts/modals_funtion.js"></script>
+    <script src="../scripts/jquery.js"></script>
+    <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
+    <script src="../scripts/datatables.min.js"></script>
+    <script src="../scripts/table.js"></script>
+    <script src="../scripts/modals_funtion.js"></script>
 </body>
 
 </html>

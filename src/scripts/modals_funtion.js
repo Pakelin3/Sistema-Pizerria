@@ -26,6 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
 function updateCantidad(option) {
     document.getElementById('cantidadSpan').textContent = 'Cantidad de ' + option;
 }
+function limpiarFormulario() {
+    $('#responseMessage').empty();
+    $('#productForm')[0].reset();
+}
 
 function negativos_noNumeros(inputId) {
     $('#' + inputId).on('input', function () {
