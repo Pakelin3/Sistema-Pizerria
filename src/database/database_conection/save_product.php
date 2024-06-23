@@ -1,6 +1,16 @@
 <?php
 include './conection.php';
 
+function registrarMovimiento($conn, $nombre, $idTipoMovimiento, $descripcion, $idProducto = null, $idIngrediente = null)
+{
+    $sql = "INSERT INTO Historial (Nombre_Producto_Insumo, Fecha, ID_Tipo_Movimiento, Descripcion, ID_Producto, ID_Ingrediente) 
+            VALUES (?, NOW(), ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sisii", $nombre, $idTipoMovimiento, $descripcion, $idProducto, $idIngrediente);
+    $stmt->execute();
+    $stmt->close();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre_mercancia = $_POST['nombre_mercancia'];
     $tipo_mercancia = $_POST['tipo_mercancia'];
@@ -13,11 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_ingredientes = $conn->prepare($sql_ingredientes);
         $stmt_ingredientes->bind_param("si", $nombre_mercancia, $cantidad_gramos);
         if ($stmt_ingredientes->execute()) {
+            $last_id = $stmt_ingredientes->insert_id;
+            registrarMovimiento($conn, $nombre_mercancia, 1, "Se han añadido $cantidad_gramos gramos de $nombre_mercancia al inventario de ingredientes.", null, $last_id);
             echo "Se han añadido " . $cantidad_gramos . "g de " . $nombre_mercancia . " al inventario de ingredientes.";
         } else {
             http_response_code(500);
             echo "Error: " . $sql_ingredientes . "<br>" . $conn->error;
         }
+        $stmt_ingredientes->close();
     } else {
         $sql = "INSERT INTO Productos (ID_Tipo_Producto, Nombre, Requiere_Inventario) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
@@ -31,12 +44,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt_inventario = $conn->prepare($sql_inventario);
                 $stmt_inventario->bind_param("iid", $last_id, $cantidad, $precio);
                 $stmt_inventario->execute();
+                registrarMovimiento($conn, $nombre_mercancia, 1, "Se han añadido $cantidad unidades de $nombre_mercancia al inventario con un precio de $precio.", $last_id);
                 echo "Se han añadido " . $cantidad . " " . $nombre_mercancia . " al inventario.";
+                $stmt_inventario->close();
             }
         } else {
             http_response_code(500);
             echo "Error: " . $sql . "<br>" . $conn->error;
         }
+        $stmt->close();
     }
 } else {
     http_response_code(405);
