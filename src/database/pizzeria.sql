@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2024 at 07:36 PM
+-- Generation Time: Jun 24, 2024 at 04:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,6 +44,19 @@ CREATE TABLE `historial` (
 INSERT INTO `historial` (`ID_Historial`, `ID_Tipo_Movimiento`, `ID_Producto`, `ID_Ingrediente`, `Nombre_Producto_Insumo`, `Fecha`, `Descripcion`) VALUES
 (1, 1, 6, NULL, 'Frescolita de lata 350ml', '2024-06-23 13:11:52', 'Se han añadido 20 unidades de Frescolita de lata 350ml al inventario con un precio de 1.25.'),
 (2, 1, 7, NULL, 'Agua Minalba 500ml', '2024-06-23 13:17:23', 'Se han añadido 100 unidades de Agua Minalba 500ml al inventario con un precio de 1.20.');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `historial_movimientos`
+-- (See below for the actual view)
+--
+CREATE TABLE `historial_movimientos` (
+`Nombre_Producto_Insumo` varchar(255)
+,`Fecha` datetime
+,`Tipo_Movimiento` varchar(255)
+,`Descripcion` text
+);
 
 -- --------------------------------------------------------
 
@@ -112,7 +125,7 @@ INSERT INTO `inventario` (`ID_Inventario`, `ID_Producto`, `Cantidad`, `Precio`) 
 --
 CREATE TABLE `inventario_ingredientes` (
 `Nombre` varchar(150)
-,`Cantidad` int(11)
+,`Cantidad` varchar(12)
 );
 
 -- --------------------------------------------------------
@@ -186,14 +199,14 @@ CREATE TABLE `registros_pedidos` (
 
 CREATE TABLE `tipo_movimiento` (
   `ID_Tipo_Movimiento` int(11) NOT NULL,
-  `Descripcion` varchar(255) NOT NULL
+  `Tipo_Movimiento` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tipo_movimiento`
 --
 
-INSERT INTO `tipo_movimiento` (`ID_Tipo_Movimiento`, `Descripcion`) VALUES
+INSERT INTO `tipo_movimiento` (`ID_Tipo_Movimiento`, `Tipo_Movimiento`) VALUES
 (1, 'Añadir');
 
 -- --------------------------------------------------------
@@ -220,11 +233,20 @@ INSERT INTO `tipo_producto` (`ID_Tipo_Produto`, `Tipo_Producto`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Structure for view `historial_movimientos`
+--
+DROP TABLE IF EXISTS `historial_movimientos`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `historial_movimientos`  AS SELECT `h`.`Nombre_Producto_Insumo` AS `Nombre_Producto_Insumo`, `h`.`Fecha` AS `Fecha`, `tm`.`Tipo_Movimiento` AS `Tipo_Movimiento`, `h`.`Descripcion` AS `Descripcion` FROM (`historial` `h` join `tipo_movimiento` `tm` on(`h`.`ID_Tipo_Movimiento` = `tm`.`ID_Tipo_Movimiento`)) ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view `inventario_ingredientes`
 --
 DROP TABLE IF EXISTS `inventario_ingredientes`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `inventario_ingredientes`  AS SELECT `i`.`Nombre_Ingrediente` AS `Nombre`, `i`.`Cantidad_Inventario` AS `Cantidad` FROM `ingredientes` AS `i` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `inventario_ingredientes`  AS SELECT `ingredientes`.`Nombre_Ingrediente` AS `Nombre`, concat(`ingredientes`.`Cantidad_Inventario`,'g') AS `Cantidad` FROM `ingredientes` ;
 
 -- --------------------------------------------------------
 
@@ -233,7 +255,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `inventario_productos`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `inventario_productos`  AS SELECT `p`.`Nombre` AS `Nombre`, `i`.`Cantidad` AS `Cantidad`, `i`.`Precio` AS `Precio` FROM ((`productos` `p` join `tipo_producto` `tp` on(`p`.`ID_Tipo_Producto` = `tp`.`ID_Tipo_Produto`)) join `inventario` `i` on(`p`.`ID_Producto` = `i`.`ID_Producto`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `inventario_productos`  AS SELECT `p`.`Nombre` AS `Nombre`, `i`.`Cantidad` AS `Cantidad`, `i`.`Precio` AS `Precio` FROM (`inventario` `i` join `productos` `p` on(`i`.`ID_Producto` = `p`.`ID_Producto`)) ;
 
 --
 -- Indexes for dumped tables
