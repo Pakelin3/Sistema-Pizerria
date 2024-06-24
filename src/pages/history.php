@@ -67,24 +67,28 @@
     <script src="../scripts/jquery.js"></script>
     <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
     <script src="../scripts/datatables.min.js"></script>
-    <script src="../scripts/modals_funtion.js"></script>
     <script>
     $(document).ready(function() {
-        $('#historial').DataTable({
-            "ajax": "../database/database_conection/get_historial_data.php",
-            "columns": [{
-                    "data": "Nombre_Producto_Insumo"
-                },
-                {
-                    "data": "Fecha"
-                },
-                {
-                    "data": "Tipo_Movimiento"
-                },
-                {
-                    "data": "Descripcion"
-                }
-            ]
+        $.getJSON('../utils/spanish.txt', function(language) {
+            $('#historial').DataTable({
+                "language": language,
+                "ajax": "../database/database_conection/get_historial_data.php",
+                "columns": [{
+                        "data": "Nombre_Producto_Insumo"
+                    },
+                    {
+                        "data": "Fecha"
+                    },
+                    {
+                        "data": "Tipo_Movimiento"
+                    },
+                    {
+                        "data": "Descripcion"
+                    }
+                ]
+            });
+        }).fail(function() {
+            console.error('Error al cargar el archivo de traducción.');
         });
     });
     </script>
