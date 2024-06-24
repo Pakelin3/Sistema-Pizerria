@@ -12,23 +12,11 @@
 </head>
 
 <body style="background-color: #C2E6FF;">
-
-    <div class="d-flex flex-column vw-100 border-bottom shadow py-2"
-        style=" padding-left: 150px; height:175px; background: white;">
-
-        <div class="d-flex px-0 mx-5">
-            <h1 class="text-start h-75">Inventario</h1>
-        </div>
-        <div class="d-flex align-items-end px-0 border-top border-2 mt-5 ">
-            <div class="d-flex align-items-center justify-content-start pt-3 mx-5">
-                <a class="link-secondary link-opacity-75 link-offset-2 link-underline link-underline-opacity-10"
-                    href="./index.php">Inicio</a>
-                <div class="mx-2 opacity-75">/</div>
-                <a class="link-secondary link-offset-2 link-underline link-underline-opacity-10"
-                    href="./inventory.php ">Inventario</a>
-            </div>
-        </div>
-    </div>
+    <?php
+    $page_title = 'Inventario';
+    $page_current = './inventory.php';
+    include '../components/header.php';
+    ?>
 
     <div class="d-flex min-vw-100 justify-content-between px-5 my-4"
         style="padding-left: 198px !important; height:48px;">

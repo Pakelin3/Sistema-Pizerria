@@ -1,9 +1,6 @@
 $(document).ready(function () {
-    var ingredientesTable;
-    var productosTable;
-
     $.getJSON('../utils/spanish.txt', function (language) {
-        ingredientesTable = $('#ingredientes').DataTable({
+        var tableIngredientes = $('#ingredientes').DataTable({
             language: language,
             columns: [
                 { "title": "Nombre", "data": "Nombre" },
@@ -11,7 +8,7 @@ $(document).ready(function () {
             ]
         });
 
-        productosTable = $('#productos').DataTable({
+        var tableProductos = $('#productos').DataTable({
             language: language,
             columns: [
                 { "title": "Nombre", "data": "Nombre" },
@@ -19,43 +16,58 @@ $(document).ready(function () {
                 { "title": "Precio", "data": "Precio" }
             ]
         });
-    });
 
-    function loadData(filterValue) {
-        $.ajax({
-            url: '../database/database_conection/get_inventory_data.php',
-            type: 'POST',
-            data: { filter: filterValue },
-            success: function (response) {
-                if (response.error) {
-                    console.error(response.error);
-                    return;
+        function loadData(filterValue) {
+            console.log('Enviando filtro:', filterValue);
+            $.ajax({
+                url: '../database/database_conection/get_inventory_data.php',
+                type: 'POST',
+                data: { filter: filterValue },
+                success: function (response) {
+                    console.log('Respuesta recibida:', response);
+                    if (response.error) {
+                        console.error(response.error);
+                        return;
+                    }
+                    if (filterValue == '1') {
+                        $('#productosTable').hide();
+                        $('#ingredientesTable').show();
+                        tableIngredientes.clear().draw();
+
+                        $.each(response, function (index, item) {
+                            tableIngredientes.row.add({
+                                "Nombre": item.Nombre,
+                                "Cantidad": item.Cantidad
+                            }).draw();
+                        });
+                    } else if (filterValue == '2') {
+                        $('#ingredientesTable').hide();
+                        $('#productosTable').show();
+                        tableProductos.clear().draw();
+
+                        $.each(response, function (index, item) {
+                            tableProductos.row.add({
+                                "Nombre": item.Nombre,
+                                "Cantidad": item.Cantidad,
+                                "Precio": item.Precio
+                            }).draw();
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al obtener datos del inventario:', xhr.responseText);
                 }
+            });
+        }
 
-                ingredientesTable.clear().rows.add(response.ingredientes).draw();
-                productosTable.clear().rows.add(response.productos).draw();
+        loadData('2');
+        $('#inputGroupSelect03').val('2');
 
-                if (filterValue === '1') {
-                    $('#ingredientesTable').show();
-                    $('#productosTable').hide();
-                } else if (filterValue === '2') {
-                    $('#ingredientesTable').hide();
-                    $('#productosTable').show();
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al obtener datos del inventario:', xhr.responseText);
+        $('#filterButton').click(function () {
+            var filterValue = $('#inputGroupSelect03').val();
+            if (filterValue !== "Por...") {
+                loadData(filterValue);
             }
         });
-    }
-
-    loadData('2');
-    $('#inputGroupSelect03').val('2');
-
-    $('#filterButton').click(function () {
-        var filterValue = $('#inputGroupSelect03').val();
-        if (filterValue !== "Por...") {
-            loadData(filterValue);
-        }
     });
 });

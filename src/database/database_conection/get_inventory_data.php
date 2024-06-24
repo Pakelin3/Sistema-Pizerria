@@ -11,9 +11,9 @@ if (empty($filter)) {
 }
 
 if ($filter === '1') {
-    $sql = "SELECT Nombre_Ingrediente AS Nombre, CONCAT(Cantidad_Inventario, 'g') AS Cantidad FROM Ingredientes";
+    $sql = "SELECT * FROM inventario_ingredientes";
 } elseif ($filter === '2') {
-    $sql = "SELECT p.Nombre, i.Cantidad, i.Precio FROM Inventario i JOIN Productos p ON i.ID_Producto = p.ID_Producto";
+    $sql = "SELECT * FROM inventario_productos";
 } else {
     echo json_encode(['error' => 'Invalid filter: unknown value']);
     exit;
@@ -21,20 +21,15 @@ if ($filter === '1') {
 
 $result = $conn->query($sql);
 
-$ingredientes = [];
-$productos = [];
+$data = [];
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        if ($filter === '1') {
-            $ingredientes[] = $row;
-        } elseif ($filter === '2') {
-            $productos[] = $row;
-        }
+        $data[] = $row;
     }
 }
 
-echo json_encode(['ingredientes' => $ingredientes, 'productos' => $productos]);
+echo json_encode($data);
 
 if (isset($conn)) {
     $conn->close();
