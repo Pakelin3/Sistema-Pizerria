@@ -11,6 +11,8 @@ function registrarMovimiento($conn, $nombre, $idTipoMovimiento, $descripcion, $i
     $stmt->close();
 }
 
+$response = array();
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre_mercancia = $_POST['nombre_mercancia'];
     $tipo_mercancia = $_POST['tipo_mercancia'];
@@ -25,10 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt_ingredientes->execute()) {
             $last_id = $stmt_ingredientes->insert_id;
             registrarMovimiento($conn, $nombre_mercancia, 1, "Se han añadido $cantidad_gramos gramos de $nombre_mercancia al inventario de ingredientes.", null, $last_id);
-            echo "Se han añadido " . $cantidad_gramos . "g de " . $nombre_mercancia . " al inventario de ingredientes.";
+            $response['message'] = "Se han añadido " . $cantidad_gramos . "g de " . $nombre_mercancia . " al inventario de ingredientes.";
         } else {
             http_response_code(500);
-            echo "Error: " . $sql_ingredientes . "<br>" . $conn->error;
+            $response['error'] = "Error: " . $sql_ingredientes . "<br>" . $conn->error;
         }
         $stmt_ingredientes->close();
     } else {
@@ -45,20 +47,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt_inventario->bind_param("iid", $last_id, $cantidad, $precio);
                 $stmt_inventario->execute();
                 registrarMovimiento($conn, $nombre_mercancia, 1, "Se han añadido $cantidad unidades de $nombre_mercancia al inventario con un precio de $precio.", $last_id);
-                echo "Se han añadido " . $cantidad . " " . $nombre_mercancia . " al inventario.";
+                $response['message'] = "Se han añadido " . $cantidad . " " . $nombre_mercancia . " al inventario.";
                 $stmt_inventario->close();
             }
         } else {
             http_response_code(500);
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            $response['error'] = "Error: " . $sql . "<br>" . $conn->error;
         }
         $stmt->close();
     }
 } else {
     http_response_code(405);
-    echo "Método no permitido";
+    $response['error'] = "Método no permitido";
 }
 
 if (isset($conn)) {
     $conn->close();
 }
+
+header('Content-Type: application/json');
+echo json_encode($response);

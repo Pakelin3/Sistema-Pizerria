@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="../styles/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles/datatables.min.css">
     <link rel="stylesheet" href="../styles/sidebar_style.css">
-    <title>Home</title>
+    <title>Inicio</title>
 </head>
 
 <body>
     <!-- sidebar -->
     <?php include '../components/sidebar.php'; ?>
+    <h1>holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</h1>
 
     <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
     <script src="../scripts/datatables.min.js"></script>

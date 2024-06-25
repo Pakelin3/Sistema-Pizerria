@@ -10,6 +10,7 @@ if (empty($filter)) {
     exit;
 }
 
+$sql = '';
 if ($filter === '1') {
     $sql = "SELECT * FROM inventario_ingredientes";
 } elseif ($filter === '2') {

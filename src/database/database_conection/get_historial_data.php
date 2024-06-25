@@ -1,7 +1,31 @@
 <?php
 include './conection.php';
 
-$sql = "SELECT * FROM historial_movimientos";
+$filter = isset($_GET['filter']) ? $_GET['filter'] : '';
+$startDate = isset($_GET['startDate']) ? $_GET['startDate'] : '';
+$endDate = isset($_GET['endDate']) ? $_GET['endDate'] : '';
+
+$whereClauses = [];
+
+if ($filter === '1') {
+    $sql = "SELECT * FROM historial_ingredientes";
+} elseif ($filter === '2') {
+    $sql = "SELECT * FROM historial_productos";
+} elseif ($filter === '3') {
+    $sql = "SELECT * FROM historial_movimientos";
+}
+
+if (!empty($startDate)) {
+    $whereClauses[] = "Fecha >= '$startDate'";
+}
+
+if (!empty($endDate)) {
+    $whereClauses[] = "Fecha <= '$endDate'";
+}
+
+if (count($whereClauses) > 0) {
+    $sql .= ' WHERE ' . implode(' AND ', $whereClauses);
+}
 
 $result = $conn->query($sql);
 

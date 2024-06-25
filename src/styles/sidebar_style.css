@@ -1,3 +1,7 @@
+body {
+  background-color: #c2e6ff;
+}
+
 .button_h:hover {
   background-color: #404850;
 }
@@ -18,7 +22,9 @@
   height: 800px;
   width: 100%;
 }
-
+.mr_25px {
+  margin-right: 25px;
+}
 .solid-border {
   border: 1px solid;
   margin-right: 1rem;

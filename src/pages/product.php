@@ -11,6 +11,13 @@
 </head>
 
 <body>
+    <!-- Header -->
+    <?php
+    $page_title = 'Productos';
+    $page_current = './product.php';
+    include '../components/header.php';
+    ?>
+
     <!-- sidebar -->
     <?php include '../components/sidebar.php'; ?>
 

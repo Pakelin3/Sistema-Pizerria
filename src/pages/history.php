@@ -10,7 +10,7 @@
     <title>Historial</title>
 </head>
 
-<body style="background-color: #C2E6FF;">
+<body>
 
     <?php
     $page_title = 'Historial';
@@ -21,17 +21,25 @@
     <!-- sidebar -->
     <?php include '../components/sidebar.php'; ?>
 
-    <div class="d-flex min-vw-100 justify-content-between px-5 my-4 "
-        style="padding-left: 198px !important; height:48px;">
-        <h1 class=" fw-semibold m-0">Historial de movimientos</h1>
-        <div class=" d-flex w-50 align-items-center justify-content-end">
-            <div class="input-group mb-3" style="margin-right: 25px;" id="">
-                <span class="input-group-text">Desde</span>
-                <input type="date" class="form-control" aria-label="">
+    <div class="d-flex min-vw-100 justify-content-between px-5 my-4 " style="padding-left: 198px !important; height:48px;">
+        <h1 class="fw-semibold m-0 w-50">Historial de movimientos</h1>
+        <div class="d-flex w-50 align-items-center justify-content-end">
+            <div class="input-group mr_25px">
+                <button id="filterButton" class="btn btn-outline-success" type="button">Filtrar</button>
+                <select class="form-select" id="inputGroupSelect03" aria-label="filtrar por">
+                    <option value="0" disabled selected>Por...</option>
+                    <option value="1">Ingredientes</option>
+                    <option value="2">Consumibles</option>
+                    <option value="3">Todo</option>
+                </select>
             </div>
-            <div class="input-group mb-3" id="">
+            <div class="input-group mr_25px">
+                <span class="input-group-text">Desde</span>
+                <input type="date" class="form-control" id="startDate" aria-label="">
+            </div>
+            <div class="input-group">
                 <span class="input-group-text">Hasta</span>
-                <input type="date" class="form-control" aria-label="">
+                <input type="date" class="form-control" id="endDate" aria-label="">
             </div>
         </div>
     </div>
@@ -42,8 +50,8 @@
         <div class="container rounded-2 border py-2" style="background-color: white;">
             <!-- Tabla de datos para historial -->
             <div id="historialTable" class="table-responsive">
-                <table id="historial" class="display" style="width:100%">
-                    <thead class="border-bottom">
+                <table id="historial" class="table table-striped w-100 h-50">
+                    <thead>
                         <tr id="historialHeaders">
                             <th>Nombre</th>
                             <th>Fecha</th>
@@ -51,7 +59,7 @@
                             <th>Descripción</th>
                         </tr>
                     </thead>
-                    <tfoot class="border-top">
+                    <tfoot style="border: white;">
                         <tr id="historialFooters">
                             <th>Nombre</th>
                             <th>Fecha</th>
@@ -64,34 +72,59 @@
         </div>
     </div>
 
+
     <script src="../scripts/jquery.js"></script>
     <script src="../scripts/bootstrap js/bootstrap.bundle.min.js"></script>
     <script src="../scripts/datatables.min.js"></script>
     <script>
-    $(document).ready(function() {
-        $.getJSON('../utils/spanish.txt', function(language) {
-            $('#historial').DataTable({
-                "language": language,
-                "ajax": "../database/database_conection/get_historial_data.php",
-                "columns": [{
-                        "data": "Nombre_Producto_Insumo"
-                    },
-                    {
-                        "data": "Fecha"
-                    },
-                    {
-                        "data": "Tipo_Movimiento"
-                    },
-                    {
-                        "data": "Descripcion"
-                    }
-                ]
+        $(document).ready(function() {
+            function loadData(filterValue, startDate = '', endDate = '') {
+                $.getJSON('../utils/spanish.txt', function(language) {
+                    $('#historial').DataTable({
+                        "language": language,
+                        "destroy": true,
+                        "ajax": {
+                            "url": "../database/database_conection/get_historial_data.php",
+                            "data": {
+                                "filter": filterValue,
+                                "startDate": startDate,
+                                "endDate": endDate
+                            },
+                            "dataSrc": "data"
+                        },
+                        "columns": [{
+                                "data": "Nombre_Producto_Insumo"
+                            },
+                            {
+                                "data": "Fecha"
+                            },
+                            {
+                                "data": "Tipo_Movimiento"
+                            },
+                            {
+                                "data": "Descripcion"
+                            }
+                        ]
+                    });
+                }).fail(function() {
+                    console.error('Error al cargar el archivo de traducción.');
+                });
+            }
+
+            loadData('3');
+            $('#inputGroupSelect03').val('3');
+
+            $('#filterButton').click(function() {
+                var filterValue = $('#inputGroupSelect03').val();
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+                if (filterValue !== "Por...") {
+                    loadData(filterValue, startDate, endDate);
+                }
             });
-        }).fail(function() {
-            console.error('Error al cargar el archivo de traducción.');
         });
-    });
     </script>
+
 </body>
 
 </html>
