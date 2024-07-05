@@ -30,17 +30,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const infoTypeSpan = document.getElementById('Q_infoType');
     const infoPlaceholderInput = document.getElementById('quantity1');
 
-    // Ocultar la cantidad al cargar la página
     quantityGroupDiv.style.display = 'none';
 
     typeDiv.addEventListener('change', function () {
         const productType = this.value;
-
-        // Limpiar el contenido de choiceProduct
         selectElement.innerHTML = '<option disabled selected>Elija la opción...</option>';
         quantityGroupDiv.style.display = 'none';
-
-        // Cambiar el contenido de Q_infoType y el placeholder según el tipo de mercancía
         if (productType == '1') {
             infoTypeSpan.textContent = 'Cantidad en gramos';
             infoPlaceholderInput.placeholder = 'Cantidad en gramos';
@@ -48,8 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
             infoTypeSpan.textContent = 'Unidades';
             infoPlaceholderInput.placeholder = 'Unidades';
         }
-
-        // Recargar las opciones de mercancía según el tipo seleccionado
         loadProductOptions();
     });
 
