@@ -63,9 +63,18 @@ document.addEventListener('DOMContentLoaded', function () {
 //     document.getElementById('cantidadSpan').textContent = 'Cantidad de ' + option;
 // }
 function limpiarFormulario() {
+    const quantityGramsDiv = document.getElementById('Q_G');
+    const quantityGroupDiv = document.getElementById('quantityGroup');
+    const quantityDiv = document.getElementById('Q');
+    const priceDiv = document.getElementById('P');
     $('#responseMessage').empty();
     $('#productForm')[0].reset();
+    $('#addProductForm')[0].reset();
     $('.input-group-text').removeClass('bg-success-subtle bg-danger-subtle');
+    quantityGroupDiv.style.display = 'none';
+    quantityGramsDiv.style.display = 'none';
+    quantityDiv.style.display = 'none';
+    priceDiv.style.display = 'none';
 }
 
 function negativos_noNumeros(inputId) {
